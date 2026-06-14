@@ -1,0 +1,61 @@
+paths:
+  scene_xml: "../legged_gym/resources/robots/my_robot/xml/scene_terrain.xml"
+  policy_path: "../legged_gym/logs/rough_my_robot/exported/policies/policy.pt"
+
+# 这里的 joint_names 顺序 必须 和你在 play.py 里打印出的 env.dof_names 顺序一模一样！
+# 如果机器狗在仿真里还是“歪七扭八”或当场劈叉，绝对是因为下面这个列表的顺序和网络输出不对齐！
+joint_names:
+  - FL_hip_joint
+  - FL_thigh_joint
+  - FL_calf_joint
+  - FR_hip_joint
+  - FR_thigh_joint
+  - FR_calf_joint
+  - RL_hip_joint
+  - RL_thigh_joint
+  - RL_calf_joint
+  - RR_hip_joint
+  - RR_thigh_joint
+  - RR_calf_joint
+
+# 这个 default_dof_pos 的顺序也要跟着上面的 joint_names 保持一一对应
+default_dof_pos: [ 0.0,  0.9, -1.6, 
+                  -0.0,  0.9, -1.6, 
+                   0.0,  0.9, -1.6, 
+                  -0.0,  0.9, -1.6]
+
+base_init_pos: [0.0, 0.0, 0.35]
+base_init_quat: [1.0, 0.0, 0.0, 0.0]
+
+command_signs:
+  x: -1.0
+  y: -1.0
+  yaw: -1.0
+
+command_filter_alpha: 0.35
+command_dead_zone: 0.03
+zero_command_threshold: 0.05
+debug_print_interval: 10
+debug_joint_details: true
+
+# 必须与你训练环境 my_robot_config.py 保持完全一致
+p_gains: [40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0]
+d_gains: [ 1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0]
+actions_scale: [0.125, 0.25, 0.25,
+                0.125, 0.25, 0.25,
+                0.125, 0.25, 0.25,
+                0.125, 0.25, 0.25]
+
+scale_factors:
+  scale_lin_vel: 2.0
+  scale_ang_vel: 0.25
+  scale_dof_pos: 1.0
+  scale_dof_vel: 0.05
+
+sim_steps_per_loop: 4
+timestep: 0.005
+warmup_steps: 100
+
+num_obs_current: 45
+num_obs_encoder: 270
+num_obs: 64

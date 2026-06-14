@@ -1,0 +1,82 @@
+my_robot/himloco:
+  # 这份文件由 deploy/src/library/core/rl_sdk/rl_sdk.cpp::InitRL 在进入 RLLocomotion 时加载。
+  # 所有数值与 HIMLoco/legged_gym/envs/my_robot/my_robot_config.py 的训练值严格对齐。
+  model_name: "policy.pt"
+
+  # ----- 观测向量 -----
+  # 训练时使用 6 帧历史，每帧 45 维：cmd(3) + ang_vel(3) + gravity(3) + dof_pos(12) + dof_vel(12) + actions(12)
+  num_observations: 45
+  observations: ["commands", "ang_vel", "gravity_vec", "dof_pos", "dof_vel", "actions"]
+  observations_history: [0, 1, 2, 3, 4, 5]  # 0 是当前帧
+  observations_history_priority: "time"     # 时间优先 → 推理时按时间序列堆叠
+  clip_obs: 100.0
+
+  # ----- 动作裁剪（与 MyRobotCfg.normalization.clip_actions = 5 对齐） -----
+  clip_actions_lower: [-5.0, -5.0, -5.0,
+                       -5.0, -5.0, -5.0,
+                       -5.0, -5.0, -5.0,
+                       -5.0, -5.0, -5.0]
+  clip_actions_upper: [ 5.0,  5.0,  5.0,
+                        5.0,  5.0,  5.0,
+                        5.0,  5.0,  5.0,
+                        5.0,  5.0,  5.0]
+
+  # ----- PD 增益（训练时 stiffness=40, damping=1，控制类型 P） -----
+  rl_kp: [40.0, 40.0, 40.0,
+          40.0, 40.0, 40.0,
+          40.0, 40.0, 40.0,
+          40.0, 40.0, 40.0]
+  rl_kd: [ 1.0,  1.0,  1.0,
+           1.0,  1.0,  1.0,
+           1.0,  1.0,  1.0,
+           1.0,  1.0,  1.0]
+
+  # ----- 站立/趴下插值用的较硬增益（FSM 状态切换时不跑策略） -----
+  fixed_kp: [60.0, 60.0, 60.0,
+             60.0, 60.0, 60.0,
+             60.0, 60.0, 60.0,
+             60.0, 60.0, 60.0]
+  fixed_kd: [ 2.0,  2.0,  2.0,
+              2.0,  2.0,  2.0,
+              2.0,  2.0,  2.0,
+              2.0,  2.0,  2.0]
+
+  num_of_dofs: 12
+
+  # ----- 动作缩放（训练 action_scale=0.25，全关节统一） -----
+  action_scale: [0.125, 0.25, 0.25,
+                 0.125, 0.25, 0.25,
+                 0.125, 0.25, 0.25,
+                 0.125, 0.25, 0.25]
+
+  # ----- Observation 标量缩放（与 MyRobotCfg.normalization.obs_scales 对齐） -----
+  lin_vel_scale: 2.0
+  ang_vel_scale: 0.25
+  dof_pos_scale: 1.0
+  dof_vel_scale: 0.05
+  commands_scale: [2.0, 2.0, 0.25]
+
+  # ----- 力矩硬限幅（电机额定，安全用） -----
+  torque_limits: [23.7, 23.7, 23.7,
+                  23.7, 23.7, 23.7,
+                  23.7, 23.7, 23.7,
+                  23.7, 23.7, 23.7]
+
+  # ----- 默认站姿（与 MyRobotCfg.init_state.default_joint_angles 对齐：hip=0, thigh=0.9, calf=-1.6） -----
+  default_dof_pos: [ 0.0,  0.9, -1.6,
+                     0.0,  0.9, -1.6,
+                     0.0,  0.9, -1.6,
+                     0.0,  0.9, -1.6]
+
+  # ----- 关节顺序映射 -----
+  # 算法侧的 12 维向量按 URDF 顺序 (FL_hip/thigh/calf, FR_..., RL_..., RR_...) 排，
+  # 硬件电机 ID 顺序也按 robot_config.yaml::joint_hardware_params 与之一致（恒等映射）。
+  # 如果以后实际接线变了，只改这里 + robot_config.yaml::joint_hardware_params 即可。
+  joint_mapping: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+
+  # 无轮电机
+  wheel_indices: []
+
+  # 控制周期 / 抽取系数（与训练时 sim_dt=0.005, decimation=4 对齐）
+  dt: 0.005
+  decimation: 4
