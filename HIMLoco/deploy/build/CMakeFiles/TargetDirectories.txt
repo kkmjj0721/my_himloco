@@ -1,3 +1,0 @@
-/home/kk/sim2real/deploy/build/CMakeFiles/main.dir
-/home/kk/sim2real/deploy/build/CMakeFiles/edit_cache.dir
-/home/kk/sim2real/deploy/build/CMakeFiles/rebuild_cache.dir

@@ -1,6 +1,4 @@
 my_robot/himloco:
-  # 这份文件由 deploy/src/library/core/rl_sdk/rl_sdk.cpp::InitRL 在进入 RLLocomotion 时加载。
-  # 所有数值与 HIMLoco/legged_gym/envs/my_robot/my_robot_config.py 的训练值严格对齐。
   model_name: "policy.pt"
 
   # ----- 观测向量 -----
@@ -69,14 +67,28 @@ my_robot/himloco:
                      0.0,  0.9, -1.6]
 
   # ----- 关节顺序映射 -----
-  # 算法侧的 12 维向量按 URDF 顺序 (FL_hip/thigh/calf, FR_..., RL_..., RR_...) 排，
-  # 硬件电机 ID 顺序也按 robot_config.yaml::joint_hardware_params 与之一致（恒等映射）。
-  # 如果以后实际接线变了，只改这里 + robot_config.yaml::joint_hardware_params 即可。
-  joint_mapping: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  joint_mapping: [0, 1, 2, 
+                  3, 4, 5, 
+                  6, 7, 8, 
+                  9, 10, 11]
 
-  # 无轮电机
-  wheel_indices: []
+  # ----- 关节极性映射 -----
+  joint_direction : [  1,   1,  1, 
+                       1,  -1, -1, 
+                      -1,   1,  1,
+                      -1,  -1, -1]
 
   # 控制周期 / 抽取系数（与训练时 sim_dt=0.005, decimation=4 对齐）
   dt: 0.005
   decimation: 4
+
+  # 设备号（手柄与上位机使用蓝牙或2.4G连接，蓝牙使用USB转xxx连接，电机使用USB转xxx连接）
+  FL_motor_serial_port : 
+  FR_motor_serial_port : 
+  RL_motor_serial_port : 
+  RR_motor_serial_port : 
+
+  IMU_serial_port : 
+
+  joystick_serial_port :
+
